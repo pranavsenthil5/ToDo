@@ -3,30 +3,22 @@
 	<head>
 		<title>TODOs</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<!-- Bootstrap gives the page a certain amount of css;The below three tags are used to get the bootstap file-->
+		
 		<link rel="stylesheet"
 			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 		<script
 			src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script
 			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		
 	</head>
-	<body>
-		<div class="container"><!-- Used because of Bootstrap -->
-			<div class="row"><!-- Used because of Bootstrap -->
-				<h3>TODO > Travel</h3>
-			</div>
 	
-			<div class="row"><!-- Used because of Bootstrap -->
-				<div class="col-md-4"><!-- Used because of Bootstrap -->
-					<ul class="list-group"><!-- Used because of Bootstrap -->
-						<li class="list-group-item">Backpack</li>
-						<li class="list-group-item">Shoes</li>
-						<li class="list-group-item">Eatables</li>
-						<li class="list-group-item">Tickets</li>
-					</ul>
-				</div>
-			</div>
-		</div>
+	<body>
+			<h3>
+				TODO > <span th:text="${todo.name}"></span><!-- To get the name of the category -->
+			</h3>
+			<ul >
+				<li th:each="task : ${todo.tasks}"> <span th:text="${task.name}"></span></li><!-- Loop to go through the list -->
+			</ul>
 	</body>
 </html>
