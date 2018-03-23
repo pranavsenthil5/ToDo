@@ -1,0 +1,10 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">,<!--Thymeleaf links html and java; 'th' is used as a variable -->
+	<head>
+    	<title>Getting Started: Serving Web Content</title>
+    	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><!-- Not Required -->
+	</head>
+	<body>
+    	<p th:text="'Hello, '+${name}" /><!-- '${variable}'is used to access the variable from java program -->
+	</body>
+</html>
