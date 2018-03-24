@@ -11,33 +11,51 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.pranav.todo.service.Todo;
 import com.pranav.todo.service.Todo.TodoTask;
 
-@Controller //This annotation tells the compiler that this is a Controller
-public class TodoController //This class controls the webpage
+@Controller
+public class TodoController
 {
-	@GetMapping("/greeting") //Get Mapping Listens to the url;In this case listens to '/greeting'
+
+	@GetMapping("/greeting")
 	public String greeting(
-	@RequestParam(name = "name", required = false, defaultValue = "World") String name,//RequestParam gets the parameteters from the url
-	Model model) //model has all the parameters
+	@RequestParam(name = "name", required = false, defaultValue = "World") String name,
+	Model model) 
 	{
 		model.addAttribute("name", name);
-		return "greeting"; //calls the 'greeting.html' page
+		return "greeting";
 	}
-	
+
 	@GetMapping("/todos")
-	public String todos(Model model) {
+	public String todos(Model model) 
+	{
 		model.addAttribute("todos", getDummyTodos());
 		return "todos";
 	}
-	
-	public List<Todo> getDummyTodos() {
-		// TODO Auto-generated method stub
-		return null;
+
+	private List<Todo> getDummyTodos() 
+	{
+		List<Todo> todos = new ArrayList<Todo>();
+		Todo todo = new Todo();
+		todo.setId(1);
+		todo.setName("Travel1");
+		todos.add(todo);
+		todo = new Todo();
+		todo.setId(2);
+		todo.setName("Travel2");
+		todos.add(todo);
+		return todos;
 	}
 
-	@GetMapping("/todo/{id}") //Get Mapping listens to '/todo/{id}'
-	public String todo()
+	@GetMapping("/todo/{id}")
+	public String todo(Model model) 
 	{
-		return "todo"; //calls the 'todo.html' page
+		Todo todo = new Todo();
+		todo.setId(1);
+		todo.setName("Travel");
+		todo.getTasks().add(new TodoTask(1, "Backpack", false));
+		todo.getTasks().add(new TodoTask(2, "Shoes", false));
+		todo.getTasks().add(new TodoTask(3, "Eatables", false));
+		todo.getTasks().add(new TodoTask(4, "Tickets", false));
+		model.addAttribute("todo", todo);
+		return "todo";
 	}
-	
 }

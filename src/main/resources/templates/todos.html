@@ -13,14 +13,21 @@
 	</head>
 
 	<body>
-		<h3>
-			TODO > <span th:text="${todo.name}"></span>
-		</h3>
-	
-	
-		<ul>
-			<li th:each="task : ${todo.tasks}"><span
-				th:text="${task.name}"></span></li>
-		</ul>
+		<div class="container">
+			<div class="row">
+				<h3>
+					TODOs <small class="text-muted"> - simple and easy to manage
+						Todos</small>
+				</h3>
+			</div>
+
+			<div class="row">
+				<div class="col-md-4">
+					<ul class="list-group">
+						<li th:each="todo:${todos}" class="list-group-item"><a th:href="@{'/todo/' + ${todo.id}}"><span th:text="${todo.name}"></span></a></li>
+					</ul>
+				</div>
+			</div>
+	</div>
 	</body>
 </html>
