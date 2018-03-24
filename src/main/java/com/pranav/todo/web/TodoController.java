@@ -1,9 +1,15 @@
-package com.pranav.web;
+package com.pranav.todo.web;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pranav.todo.service.Todo;
+import com.pranav.todo.service.Todo.TodoTask;
 
 @Controller //This annotation tells the compiler that this is a Controller
 public class TodoController //This class controls the webpage
@@ -17,12 +23,17 @@ public class TodoController //This class controls the webpage
 		return "greeting"; //calls the 'greeting.html' page
 	}
 	
-	@GetMapping("/todos") //Get Mapping listens to '/todos'
-	public String todos() 
-	{
-		return "todos"; //calls the 'todos.html' page
+	@GetMapping("/todos")
+	public String todos(Model model) {
+		model.addAttribute("todos", getDummyTodos());
+		return "todos";
 	}
 	
+	public List<Todo> getDummyTodos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@GetMapping("/todo/{id}") //Get Mapping listens to '/todo/{id}'
 	public String todo()
 	{
