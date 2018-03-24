@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Todo {
-
+	//test
 	public Integer id; //Id of the todo category
 	private String name; //Name of the todo category
 	private List<TodoTask> tasks = new ArrayList<Todo.TodoTask>(); //list of tasks
