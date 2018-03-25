@@ -1,15 +1,16 @@
 package com.pranav.todo.web;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,12 +19,16 @@ import com.pranav.todo.service.Todo;
 import com.pranav.todo.service.Todo.TodoTask;
 
 @Controller
-public class TodoController {
+public class TodoController 
+{
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 
 	@GetMapping("/greeting")
 	public String greeting(
 	@RequestParam(name = "name", required = false, defaultValue = "World") String name,
-	Model model) {
+	Model model) 
+	{
 		model.addAttribute("name", name);
 		return "greeting";
 	}
@@ -43,117 +48,41 @@ public class TodoController {
 		return "todo";
 	}
 
-	private List<Todo> getTodosFromDatabase()
+	private List<Todo> getTodosFromDatabase() 
 	{
-		List<Todo> data = new ArrayList<Todo>();
-
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/todo", "root", "root");
-			stmt = conn.createStatement();
-			
-			String strSelect = "select id, name from todo";
-			ResultSet set = stmt.executeQuery(strSelect);
-			
-			while (set.next())
-			{ 
-				Todo todo = new Todo(set.getInt("id"), set.getString("name"));
-				data.add(todo);
-			}
-
-			stmt.close();
-			conn.close();
-
-		} catch (Exception E) 
-		{
-			throw new RuntimeException(E);
-		} 
-		finally 
-		{
-			try 
-			{
-				if (stmt != null)
-					stmt.close();
-			} 
-			catch (Exception e) 
-			{
-				e.printStackTrace();
-			}
-			try 
-			{
-				if (conn != null)
-					conn.close();
-			} 
-			catch (Exception e) 
-			{
-				e.printStackTrace();
-			}
-		}
-
-		return data;
+		String strSelect = "select id, name from todo";
+		List<Todo> result = jdbcTemplate.query(strSelect,(rs, rowNum) -> new Todo(rs.getInt("id"), rs.getString("name")));
+		return CollectionUtils.isEmpty(result) ? Collections.emptyList(): result;
 	}
 
-	private Todo getTodoByIdFromDatabase(int id) {
-		Todo data = null;
+	private Todo getTodoByIdFromDatabase(int id) 
+	{
+		Todo todo = null;
 
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/todo", "root", "root");
-			
-			String strSelect = "SELECT t.id, t.name, t.user_id, tt.id as tt_id,tt.name as tt_name,tt.completed as tt_completed FROM todo t join todo_task tt on t.id=tt.todo_id where t.id=?";
-			stmt = conn.prepareStatement(strSelect);
-			stmt.setInt(1, id);
-
-			ResultSet set = stmt.executeQuery();
-			
-			Todo todo = null;
-			while (set.next()) 
-			{ 
-				if (todo == null)
-				{
-					todo = new Todo(set.getInt("id"), set.getString("name"));
-				}
-				todo.getTasks().add(new TodoTask(set.getInt("tt_id"), set.getString("tt_name"), set.getBoolean("tt_completed")));
-				data = todo;
+		String strSelect = "select id, name from todo where id=?";
+		List<Todo> result = jdbcTemplate.query(strSelect, new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps)throws SQLException 
+			{
+				ps.setInt(1, id);
 			}
+		},(rs, rowNum) -> new Todo(rs.getInt("id"), rs.getString("name")));
+		if (CollectionUtils.isEmpty(result))
+			return null;
 
-			stmt.close();
-			conn.close();
+		todo = result.get(0);
 
-		} catch (Exception E)
+		strSelect = "select id, name,completed from todo_task where todo_id=?";
+		List<TodoTask> task_results = jdbcTemplate.query(strSelect,new PreparedStatementSetter() 
 		{
-			throw new RuntimeException(E);
-		} 
-		finally 
-		{
-			try 
+			@Override
+			public void setValues(PreparedStatement ps)throws SQLException 
 			{
-				if (stmt != null)
-					{
-						stmt.close();
-					}
-			} 
-			catch (Exception e) 
-			{
-				
+				ps.setInt(1, id);
 			}
-			try 
-			{
-				if (conn != null)
-					{
-						conn.close();
-					}
-			} 
-			catch (Exception e) 
-			{
-				
-			}
-		}
+		},(rs, rowNum) -> new TodoTask(rs.getInt("id"), rs.getString("name"), rs.getBoolean("completed")));
 
-		return data;
+		todo.setTasks(task_results);
+		return todo;
 	}
 }
