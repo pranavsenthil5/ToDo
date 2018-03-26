@@ -3,26 +3,26 @@ package com.pranav.todo.service;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Todo {
+public class TodoDTO {
 	//test
 	public Integer id; //Id of the todo category
 	private String name; //Name of the todo category
-	private List<TodoTask> tasks = new ArrayList<Todo.TodoTask>(); //list of tasks
+	private List<TodoTaskDTO> tasks = new ArrayList<TodoDTO.TodoTaskDTO>(); //list of tasks
 
-	public Todo() {
+	public TodoDTO() {
 
 	}
 
-	public Todo(int id, String name) { //constructot
+	public TodoDTO(int id, String name) { //constructot
 		this.id = id;
 		this.name = name;
 	}
 	//below 6 methods are getters and setters
-	public List<TodoTask> getTasks() {
+	public List<TodoTaskDTO> getTasks() {
 		return tasks;
 	}
 
-	public void setTasks(List<TodoTask> tasks) {
+	public void setTasks(List<TodoTaskDTO> tasks) {
 		this.tasks = tasks;
 	}
 
@@ -42,17 +42,17 @@ public class Todo {
 		this.name = name;
 	}
 
-	public static class TodoTask {//nested class :to use the object directly in the outer class 
+	public static class TodoTaskDTO {//nested class :to use the object directly in the outer class 
 		private Integer id;
 		private String name;
 		private boolean completed = false;
 
-		public TodoTask() 
+		public TodoTaskDTO() 
 		{
 			
 		}
 
-		public TodoTask(int id, String name, boolean completed)//contructor
+		public TodoTaskDTO(int id, String name, boolean completed)//contructor
 		{
 			this.id = id; 
 			this.name = name;
